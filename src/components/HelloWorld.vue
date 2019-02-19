@@ -22,7 +22,8 @@
                   :key="item.title"
                   @click="playFile(item.mp3url, index)">
 
-                  <v-list-tile-content>                
+                  <v-list-tile-content>            
+                    <v-list-tile-sub-title v-html="item.title"></v-list-tile-sub-title>                                
                     <v-list-tile-sub-title v-html="item.kor"></v-list-tile-sub-title>                    
                     <v-list-tile-sub-title v-html="item.subtitle"></v-list-tile-sub-title>
                   </v-list-tile-content>        

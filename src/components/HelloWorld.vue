@@ -3,10 +3,11 @@
 <template>
   <div id="app">
     <v-app id="inspire">
-      <v-layout row>
+      <v-container fluid :grid-list-md="!$vuetify.breakpoint.xs">
+      <v-layout wrap row>
         <v-flex xs12 sm12>
           <v-card>
-            <v-list subheader two-line>
+            <v-list subheader three-line>
               <template v-for="(item, index) in items">
                 <v-subheader
                   v-if="item.header"
@@ -45,6 +46,7 @@
           </v-card>
         </v-flex>
       </v-layout>
+      </v-container>
     </v-app>
   </div> 
 </template>

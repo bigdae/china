@@ -2,6 +2,7 @@
 var deferredPrompt;
 
 if ('serviceWorker' in navigator) {
+  console.log(navigator)
   navigator.serviceWorker
     .register('sw.js')
     .then(function() {

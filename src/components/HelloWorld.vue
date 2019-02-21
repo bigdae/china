@@ -4,49 +4,44 @@
   <div id="app">
     <v-app id="inspire">
       <v-container fluid :grid-list-md="!$vuetify.breakpoint.xs">
-      <v-layout wrap row>
-        <v-flex xs12 sm12>
-          <v-card>
-            <v-list subheader three-line>
-              <template v-for="(item, index) in items">
-                <v-subheader
-                  v-if="item.header"
-                  :key="item.header"
-                >
-                  {{ item.header }}
-                </v-subheader>
+        <v-layout>
+          <v-flex xs12 sm6 offset-sm3>
 
- 
-                <v-list-tile
-                  v-else
-                  :key="item.title"
-                  @click="playFile(item.mp3url, index)">
+        <v-toolbar color="blue" dark>
+          <v-toolbar-title>복음</v-toolbar-title>
+          <v-spacer></v-spacer>
+        </v-toolbar>
 
-                  <v-list-tile-content>            
-                    <v-list-tile-sub-title v-html="item.title"></v-list-tile-sub-title>                                
-                    <v-list-tile-sub-title v-html="item.kor"></v-list-tile-sub-title>                    
-                    <v-list-tile-sub-title v-html="item.subtitle"></v-list-tile-sub-title>
-                  </v-list-tile-content>        
-                </v-list-tile> 
 
-                <v-divider :key="index"></v-divider>
+            <template v-for="(item, index) in items">
+              <v-card :key="item.header">
                 <!--
-                <v-divider :key="index"></v-divider>
-                <audio :key="index" ref="audio" :src="item.mp3url"></audio>
-                <source :src="item.mp3url">>
-
+                <v-img
+                  src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
+                  aspect-ratio="2.75"
+                ></v-img>
                 -->
-                
+
+                <v-card-title primary-title @click="playFile(item.mp3url, index)">
+
+                  <div>
+                    <div class="headline text-xs-left">{{item.title}}</div>
+                    <div class="text-xs-left"> {{ item.kor }} </div>
+                    <div class="text-xs-left mb-2"> {{ item.subtitle }} </div>                    
+                  </div>
+                </v-card-title>
+                <v-divider :key="index+'div'"></v-divider>
+              </v-card>
                 <audio :key="index" ref="audio">
                  <source :src="item.mp3url">
-                </audio>
-                
-                
-              </template>
-            </v-list>
-          </v-card>
-        </v-flex>
-      </v-layout>
+                </audio>              
+            </template>
+            <v-footer class="pa-3">
+              <v-spacer></v-spacer>
+              <div>&copy; {{ new Date().getFullYear() }}</div>
+            </v-footer>            
+          </v-flex>
+        </v-layout>
       </v-container>
     </v-app>
   </div> 
@@ -62,7 +57,6 @@ export default {
   data () {
     return {
       items: [
-        { header: '복음' },
         {
           mp3url: require('../assets/1.mp3'),
           title: '神创造宇宙万物。',

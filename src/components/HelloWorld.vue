@@ -14,20 +14,21 @@
 
 
             <template v-for="(item, index) in items">
-              <v-card :key="item.header">
-                <!--
+              <v-card :key="item.header"
+              @click="playFile(item.mp3url, index)">
+           
                 <v-img
                   src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
                   aspect-ratio="2.75"
                 ></v-img>
-                -->
 
-                <v-card-title primary-title @click="playFile(item.mp3url, index)">
+
+                <v-card-title primary-title>
 
                   <div>
                     <div class="headline text-xs-left">{{item.title}}</div>
                     <div class="text-xs-left"> {{ item.kor }} </div>
-                    <div class="text-xs-left mb-2"> {{ item.subtitle }} </div>                    
+                    <div class="text-xs-left mb-2"> {{ item.subtitle }} </div>  
                   </div>
                 </v-card-title>
                 <v-divider :key="index+'div'"></v-divider>

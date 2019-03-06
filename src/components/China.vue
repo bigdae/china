@@ -14,8 +14,7 @@
 
 
             <template v-for="(item, index) in items"> <!-- engItems -->
-              <v-card :key="item.header"
-              @click="playFile(item.mp3url, index)">
+              <v-card :key="item.header">
            
                 <v-img
                   src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
@@ -26,9 +25,17 @@
                 <v-card-title primary-title>
 
                   <div>
-                    <div class="text-xs-left" v-bind:class="{'headline':type!='eng'}">{{item.title}}</div>
-                    <div class="text-xs-left"> {{ item.kor }} </div>
-                    <div class="text-xs-left mb-2" v-show="type !== 'eng'"> {{ item.subtitle }} </div>  
+                    <div class="text-xs-left" 
+                         v-bind:class="{'headline':type!='eng'}"
+                         @click="playFile(item.mp3url, index, 1)"
+                         >{{item.title}}</div>
+                    <div class="text-xs-left"
+                         @click="playFile(item.mp3url, index, 1)"
+                    > {{ item.kor }} </div>
+                    <div class="text-xs-left mb-2" 
+                         v-show="type !== 'eng'"
+                         @click="playFile(item.mp3url, index, 0.7)"
+                         > {{ item.subtitle }} </div>  
                   </div>
                 </v-card-title>
                 <v-divider :key="index+'div'"></v-divider>
@@ -190,15 +197,17 @@ export default {
     }
   },
   methods :  {
-    playFile(file, index) {
+    playFile(file, index, rate) {
         if ( this.previousMusicIndex > 0 ) {
           var musicForStop = this.$refs.audio[this.previousMusicIndex];
           musicForStop.pause();
+          
           musicForStop.currentTime = 0;
         }
         this.previousMusicIndex = index;
         var music = this.$refs.audio[index];
         if(music.paused){
+            music.playbackRate = rate;
             music.play();
         }else{
             music.pause();

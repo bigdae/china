@@ -5,13 +5,7 @@
     <v-app id="inspire">
       <v-container fluid :grid-list-md="!$vuetify.breakpoint.xs">
         <v-layout>
-          <v-flex xs12 sm6 offset-sm3>
-
-        <v-toolbar color="blue" dark>
-          <v-toolbar-title>복음</v-toolbar-title>
-          <v-spacer></v-spacer>
-        </v-toolbar>
-
+          <v-flex xs12 sm12 >
 
             <template v-for="(item, index) in items"> <!-- engItems -->
               <v-card :key="item.header">
@@ -25,8 +19,7 @@
                 <v-card-title primary-title>
 
                   <div>
-                    <div class="text-xs-left" 
-                         v-bind:class="{'headline':type!='eng'}"
+                    <div class="text-xs-left headline" 
                          @click="playFile(item.mp3url, index, 1)"
                          >{{item.title}}</div>
                     <div class="text-xs-left"
@@ -208,6 +201,7 @@ export default {
         var music = this.$refs.audio[index];
         if(music.paused){
             music.playbackRate = rate;
+            //music.load()
             music.play();
         }else{
             music.pause();

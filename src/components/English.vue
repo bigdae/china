@@ -5,42 +5,27 @@
     <v-app id="inspire">
       <v-container fluid :grid-list-md="!$vuetify.breakpoint.xs">
         <v-layout>
-          <v-flex xs12 sm6 offset-sm3>
-
-        <v-toolbar color="blue" dark>
-          <v-toolbar-title>복음</v-toolbar-title>
-          <v-spacer></v-spacer>
-        </v-toolbar>
-
+          <v-flex xs12 sm12 >
 
             <template v-for="(item, index) in items"> <!-- engItems -->
               <v-card :key="item.header"
               @click="playFile(item.mp3url, index)">
            
-                <v-img
-                  src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
-                  aspect-ratio="2.75" v-show="imageShow == 'true'"
-                ></v-img>
-
-
                 <v-card-title primary-title>
-
                   <div>
-                    <div class="text-xs-left" v-bind:class="{'headline':type!='eng'}">{{item.title}}</div>
+                    <div class="text-xs-left">{{item.title}}</div>
                     <div class="text-xs-left"> {{ item.kor }} </div>
-                    <div class="text-xs-left mb-2" v-show="type !== 'eng'"> {{ item.subtitle }} </div>  
                   </div>
                 </v-card-title>
+
                 <v-divider :key="index+'div'"></v-divider>
               </v-card>
                 <audio :key="index" ref="audio">
                  <source :src="item.mp3url">
                 </audio>              
             </template>
-
             
-            
-            <v-footer class="pa-3">
+            <v-footer class="pa-2">
               <v-spacer></v-spacer>
               <div>&copy; {{ new Date().getFullYear() }}</div>
             </v-footer>            
@@ -74,7 +59,7 @@ export default {
           kor : "신이 인간을 창조했을 때, 그들은 좋은 관계에 있었습니다."
         },    
         {
-          mp3url: require('../assets/52.mp3'), //다시 녹음
+          mp3url: require('../assets/52.mp3'),
           title: 'Then one day, the first human being, Adam, committed a sin.',
           kor : "그러던 어느 날, 첫 번째 인간인 아담이 죄를 범했습니다."
         },    

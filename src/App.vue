@@ -1,7 +1,40 @@
 <template>
   <div id="app">
-    <China msg="Welcome to Your Vue.js App"/>
-    <English/>
+
+    <v-tabs
+      v-model="active"
+      color="cyan"
+      dark
+      slider-color="yellow">
+
+      <v-tabs-slider color="yellow"></v-tabs-slider>
+
+      <v-tab ripple key="1" value="#tab-1">  
+        중국어 복음
+      </v-tab>
+      <v-tab ripple key="2" value="#tab-2">  
+        영어 복음
+      </v-tab>
+
+
+      <v-tabs-items>
+        <v-tab-item>
+          <v-card flat key="1" value="tab-1">  
+            <China/>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item>
+          <v-card flat key="2" value="tab-2">  
+            <English/>
+          </v-card>
+        </v-tab-item>        
+      </v-tabs-items>      
+
+    </v-tabs>
+    
+        
+
+    
   </div>
 </template>
 
@@ -24,7 +57,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
    

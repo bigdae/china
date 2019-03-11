@@ -159,7 +159,7 @@ export default {
   methods :  {
     playFile(file, index) {
         this.index = index;
-        if ( this.previousMusicIndex > 0 ) {
+        if ( this.previousMusicIndex > 0 && this.previousMusicIndex < this.items.length ) {
           var musicForStop = this.$refs.audio[this.previousMusicIndex];
           musicForStop.pause();
           musicForStop.currentTime = 0;

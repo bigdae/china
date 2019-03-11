@@ -27,6 +27,6 @@ function closeCreatePostModal() {
   createPostArea.style.display = 'none';
 }
 
-shareImageButton.addEventListener('click', openCreatePostModal);
+//shareImageButton.addEventListener('click', openCreatePostModal);
 
 //closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);

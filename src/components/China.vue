@@ -7,18 +7,23 @@
         <v-layout>
           <v-flex xs12 sm12 >
 
+            <v-layout row wrap>
+              <v-flex xs6>
+                  <v-switch
+                    v-model="playNextMusicYn"
+                    :label="`Auto Next`"
+                  ></v-switch> 
+              </v-flex>
+              <v-flex xs6>
+                <v-btn @click="stop()">중지</v-btn>
+              </v-flex>
+            </v-layout>
+
             <template v-for="(item, index) in items"> <!-- engItems -->
               <v-card :key="item.header">
            
-                <v-img
-                  src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
-                  aspect-ratio="2.75" v-show="imageShow == 'true'"
-                ></v-img>
-
-
                 <v-card-title primary-title>
-
-                  <div>
+                  <div :id="'messageDisplay' + index">
                     <div class="text-xs-left headline" 
                          @click="playFile(item.mp3url, index, 1)"
                          >{{item.title}}</div>
@@ -38,8 +43,6 @@
                 </audio>              
             </template>
 
-            
-            
             <v-footer class="pa-3">
               <v-spacer></v-spacer>
               <div>&copy; {{ new Date().getFullYear() }}</div>
@@ -47,21 +50,30 @@
           </v-flex>
         </v-layout>
       </v-container>
+
+<!--
+      <div id="element-near-top">Element Near Top</div>
+      <v-card height="100vh">
+        <v-card-text>Scroll down, click the button, Then try scrolling down again...</v-card-text>
+      </v-card>
+      <v-btn class="my-5" @click="$vuetify.goTo('#element-near-top', { offset: -100 })">Scroll To First Div</v-btn>
+-->  
     </v-app>
+
   </div> 
 </template>
 
 <script>
-
 export default {
   name: 'App',
   components: {
   
-  },
+  },  
   data () {
     return {
       type : 'china',
-      imageShow : 'false',
+      index : 0,
+      playNextMusicYn : false,
       items: [
         {
           mp3url: require('../assets/1.mp3'),
@@ -191,21 +203,37 @@ export default {
   },
   methods :  {
     playFile(file, index, rate) {
+        this.index = index;      
         if ( this.previousMusicIndex > 0 ) {
           var musicForStop = this.$refs.audio[this.previousMusicIndex];
           musicForStop.pause();
-          
           musicForStop.currentTime = 0;
         }
         this.previousMusicIndex = index;
         var music = this.$refs.audio[index];
+        if ( music == undefined ) return;        
         if(music.paused){
             music.playbackRate = rate;
-            //music.load()
             music.play();
+            var _this = this;
+            music.onended = function() {
+              if (_this.playNextMusicYn == false) {
+                return;
+              }
+              var nextMusic = _this.$refs.audio[index+1];
+              _this.playFile(nextMusic, index+1, rate)
+              _this.$vuetify.goTo('#messageDisplay' + index)
+              
+            }
         }else{
             music.pause();
         }
+    }, 
+    stop() {
+      var music = this.$refs.audio[this.index];
+      music.pause()
+      music.currentTime = 0;
+
     }
   }
 }

@@ -7,12 +7,25 @@
         <v-layout>
           <v-flex xs12 sm12 >
 
+            <v-layout row wrap>
+              <v-flex xs6>
+                  <v-switch
+                    v-model="playNextMusicYn"
+                    :label="`Auto Next`"
+                  ></v-switch> 
+              </v-flex>
+              <v-flex xs6>
+                <v-btn @click="stop()">중지</v-btn>
+              </v-flex>
+            </v-layout>
+
+
             <template v-for="(item, index) in items"> <!-- engItems -->
               <v-card :key="item.header"
               @click="playFile(item.mp3url, index)">
            
                 <v-card-title primary-title>
-                  <div>
+                  <div :id="'engMessageDisplay' + index">
                     <div class="text-xs-left">{{item.title}}</div>
                     <div class="text-xs-left"> {{ item.kor }} </div>
                   </div>
@@ -46,7 +59,8 @@ export default {
   data () {
     return {
       type : 'china',
-      imageShow : 'false',
+      playNextMusicYn : false,      
+      index : 0, 
       items : [
         {
           mp3url: require('../assets/50.mp3'),
@@ -144,6 +158,7 @@ export default {
   },
   methods :  {
     playFile(file, index) {
+        this.index = index;
         if ( this.previousMusicIndex > 0 ) {
           var musicForStop = this.$refs.audio[this.previousMusicIndex];
           musicForStop.pause();
@@ -151,11 +166,26 @@ export default {
         }
         this.previousMusicIndex = index;
         var music = this.$refs.audio[index];
+        if ( music == undefined ) return;
         if(music.paused){
             music.play();
+            var _this = this;
+            music.onended = function() {
+              if (_this.playNextMusicYn == false) {
+                return;
+              }
+              var nextMusic = _this.$refs.audio[index+1]; 
+              _this.playFile(nextMusic, index+1)
+              _this.$vuetify.goTo('#engMessageDisplay' + index)
+            }            
         }else{
             music.pause();
         }
+    }, 
+    stop() {
+      var music = this.$refs.audio[this.index];
+      music.pause()
+      music.currentTime = 0;
     }
   }
 }

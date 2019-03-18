@@ -10,19 +10,27 @@
             <v-layout row wrap>
               <v-flex xs6>
                   <v-switch
-                    v-model="playNextMusicYn"
+                    v-model="playNextMusic"
                     :label="`Auto Next`"
                   ></v-switch> 
               </v-flex>
-              <v-flex xs6>
-                <v-btn @click="stop()">중지</v-btn>
+              <v-flex xs12 xs6>
+                <v-btn absolute
+                      dark
+                      fab
+                      middle
+                      fixed
+                      right
+                      color="gray"
+                      v-show="playingYn == 'Y' && playNextMusic == true"
+                      @click="stop()">STOP</v-btn>
               </v-flex>
             </v-layout>
 
             <template v-for="(item, index) in items"> <!-- engItems -->
-              <v-card :key="item.header">
+              <v-card :key="'content' + index">
            
-                <v-card-title primary-title>
+                <v-card-title primary-title> 
                   <div :id="'messageDisplay' + index">
                     <div class="text-xs-left headline" 
                          @click="playFile(item.mp3url, index, 1)"
@@ -32,15 +40,52 @@
                     > {{ item.kor }} </div>
                     <div class="text-xs-left mb-2" 
                          v-show="type !== 'eng'"
-                         @click="playFile(item.mp3url, index, 0.7)"
-                         > {{ item.subtitle }} </div>  
+                         @click="playFile(item.mp3url, index, 0.7)"> {{ item.subtitle }} 
+                         </div>  
                   </div>
                 </v-card-title>
+    
+                <v-btn flat small v-show='item.subs'
+                  @click="toggleButton(index)"
+                >{{toggleText}}</v-btn>
                 <v-divider :key="index+'div'"></v-divider>
               </v-card>
-                <audio :key="index" ref="audio">
+              <audio :key="'audio' + index" :ref="'audio' + index">
                  <source :src="item.mp3url">
-                </audio>              
+              </audio>         
+
+              
+              <!-- sub item start-->
+              <template v-for="(sub, sindex) in item.subs">
+                <v-card :key="'contentsub' + sindex" color="#EFEFEF">
+
+                  <v-card-title primary-title v-show=sub.show>
+                    <div :id="'subMessageDisplay' + sindex">
+                      <div class="text-xs-left headline" 
+                          @click="playFile(sub.mp3url, index+'-'+sindex, 1)"
+                          >{{sub.title}}</div>
+                      <div class="text-xs-left"
+                          @click="playFile(sub.mp3url, index+'-'+sindex, 1)"
+                      > {{ sub.kor }} </div>
+                      <div class="text-xs-left mb-2" 
+                          v-show="type !== 'eng'"
+                          @click="playFile(sub.mp3url, index+'-'+sindex, 0.7)"
+                          > {{ sub.subtitle }} </div>  
+                    </div>
+                  </v-card-title>
+                  <v-divider :key="sindex+'divs'" v-show=sub.show></v-divider>
+                </v-card>
+                <audio :key="'subaudio' + sindex" :ref="'audio' + index + '-' + sindex">
+                  <source :src="sub.mp3url">
+                </audio>         
+              <!-- sub item end -->
+                
+                    
+              </template>
+
+
+
+
             </template>
 
             <v-footer class="pa-3">
@@ -50,16 +95,7 @@
           </v-flex>
         </v-layout>
       </v-container>
-
-<!--
-      <div id="element-near-top">Element Near Top</div>
-      <v-card height="100vh">
-        <v-card-text>Scroll down, click the button, Then try scrolling down again...</v-card-text>
-      </v-card>
-      <v-btn class="my-5" @click="$vuetify.goTo('#element-near-top', { offset: -100 })">Scroll To First Div</v-btn>
--->  
     </v-app>
-
   </div> 
 </template>
 
@@ -73,7 +109,10 @@ export default {
     return {
       type : 'china',
       index : 0,
-      playNextMusicYn : false,
+      playingYn : 'N',
+      playNextMusic : false,
+      toggle : false,
+      toggleText : '펼치기',
       items: [
         {
           mp3url: require('../assets/1.mp3'),
@@ -91,7 +130,23 @@ export default {
           mp3url: require('../assets/3.mp3'),
           title: '山上的树，田野的花等.一个生命也不能自己随便出现的.',
           subtitle: "Shān shàng de shù, tiányě de huā děng. Yígè shēngmìng yě bùnéng zìjǐ suíbiàn chūxiàn de.",
-          kor : "산의 나무, 들의 꽃 등. 어떠한 생명도 스스로 임의로 생겨날 수 없습니다."
+          kor : "산의 나무, 들의 꽃 등. 어떠한 생명도 스스로 임의로 생겨날 수 없습니다.",
+          subs : [
+            {
+              mp3url: require('../assets/3-1.mp3'),
+              title: '山上的树，田野的花等.',
+              subtitle: "Shān shàng de shù, tiányě de huā děng.",
+              kor : "산의 나무, 들의 꽃 등.",
+              show : false,
+            },
+            {
+              mp3url: require('../assets/3-2.mp3'),
+              title: '一个生命也不能自己随便出现的.',
+              subtitle: "Yígè shēngmìng yě bùnéng zìjǐ suíbiàn chūxiàn de.",
+              kor : "어떠한 생명도 스스로 임의로 생겨날 수 없습니다.",
+              show : false,
+            },
+          ]
         },
         {
           mp3url: require('../assets/4.mp3'),
@@ -205,35 +260,50 @@ export default {
     playFile(file, index, rate) {
         this.index = index;      
         if ( this.previousMusicIndex > 0 && this.previousMusicIndex < this.items.length ) {
-          var musicForStop = this.$refs.audio[this.previousMusicIndex];
+          //var musicForStop = this.$refs.audio[this.previousMusicIndex];
+          var musicForStop = this.$refs['audio' + this.previousMusicIndex][0];
           musicForStop.pause();
           musicForStop.currentTime = 0;
+          this.playingYn = 'N'
         }
         this.previousMusicIndex = index;
-        var music = this.$refs.audio[index];
+        //var music = this.$refs.audio[index];
+        var music = this.$refs['audio'+index][0]
         if ( music == undefined ) return;        
         if(music.paused){
             music.playbackRate = rate;
             music.play();
+            this.playingYn = 'Y'
             var _this = this;
             music.onended = function() {
-              if (_this.playNextMusicYn == false) {
+              if (_this.playNextMusic == false) {
                 return;
               }
-              var nextMusic = _this.$refs.audio[index+1];
+              //var nextMusic = _this.$refs.audio[index+1];
+              var nextMusic = _this.$refs['audio' +(index+1)][0];
               _this.playFile(nextMusic, index+1, rate)
               _this.$vuetify.goTo('#messageDisplay' + index)
               
             }
         }else{
             music.pause();
+            this.playingYn = 'N'
         }
     }, 
     stop() {
-      var music = this.$refs.audio[this.index];
+      //var music = this.$refs.audio[this.index];
+      var music = this.$refs['audio' + this.index][0];
       music.pause()
+      this.playingYn = 'N'
       music.currentTime = 0;
 
+    },
+    toggleButton(index){
+      this.toggle = !this.toggle
+      this.toggleText = this.toggle == false ? "펼치기" : "접기";
+      for(var i in this.items[index].subs) {  
+        this.items[index].subs[i].show = this.toggle
+      }
     }
   }
 }
